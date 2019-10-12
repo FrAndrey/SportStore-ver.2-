@@ -7,16 +7,26 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using SportStore.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 
 namespace SportStore
 {
     public class Startup
     {
+
+        public IConfiguration Configuration { get; }
+
+        public Startup(IConfiguration conf) => Configuration = conf;
+
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddTransient<IPproductRepository>;
+            services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(Configuration["Data:SportStoreProducts:ConnectionString"]));
+            services.AddTransient<IPproductRepository,EFProductRepository>();
             services.AddMvc();
         }
 
